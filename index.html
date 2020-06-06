@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+    
+        .slider {
+            height: 940px;
+            width: 1180px;
+            margin: 10px auto;
+            position: relative;
+        }
+
+        /* 所有li隐藏 */
+        .slider li {
+            position: absolute;
+            display: none;
+        }
+        /* 显示第一个li */
+        .slider li:first-child {
+            display: block;
+        }
+    
+        /* 左右箭头默认隐藏 */
+        .arrow {
+            display: none;
+        }
+        /* 鼠标移入div,显示左右箭头 */
+        .slider:hover .arrow {
+            display: block;
+        }
+        /* 左右箭头样式 */
+        .arrow-left,.arrow-right {
+            font-family: "SimSun", "宋体";
+            width: 30px;
+            height: 60px;
+            background-color: rgba(0, 0, 0, 0.1);
+            position: absolute;
+            top: 50%;
+            margin-top: -30px;
+            cursor: pointer;
+            text-align: center;
+            line-height: 60px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 30px;
+        }
+        /* 鼠标移入箭头,改变背景颜色 */
+        .arrow-left:hover,
+        .arrow-right:hover {
+            background-color: rgba(0, 0, 0, .5);
+        }
+    
+        .arrow-left {
+            left: 0;
+        }
+    
+        .arrow-right {
+            right: 0;
+        }
+
+        /* 给底部小圆点按钮设置定位 */
+        .slider .focus {
+            position: absolute;
+            bottom: 20px;
+            left: 46px;
+            z-index: 1;
+        }
+
+        /* 给底部小圆点按钮设置样式 */
+        .slider .focus i {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            text-align: center;
+        }
+
+        /* current类名,用于事件处理时,给小圆点按钮动态添加类名,改变样式 */
+        .current {
+            background: #fff;
+            transition: .4s all;
+        }
+    </style>
+</head>
+<body>
+    <div class="slider">
+        <ul>
+            <li>
+                <a href="#">
+                <img src="images/1.jpg" alt="">
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                <img src="images/2.jpg" alt="">
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                <img src="images/3.jpg" alt="">
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                <img src="images/4.jpg" alt="">
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                <img src="images/5.jpg" alt="">
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                <img src="images/6.jpg" alt="">
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                <img src="images/7.jpg" alt="">
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                <img src="images/8.jpg" alt="">
+                </a>
+            </li>
+        </ul>
+        <!--左右箭头-->
+        <div class="arrow">
+            <span class="arrow-left">&lt;</span>
+            <span class="arrow-right">&gt;</span>
+        </div>
+        <!-- 小圆点按钮 -->
+        <div class="focus">
+            <i class="current"></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+        </div>
+        </div>
+</body>
+<script src="js/jquery.min.js"></script>
+<script>
+    $(function () {
+        var index = 0;//用index记录下标,默认为0
+        var lis = $('.slider li');
+
+        //1.右边箭头点击事件
+        $('.arrow-right').click(right);
+        //右箭头点击事件处理函数
+        function right() {
+            index++; 
+            //如果当前是最后一张,此时index=lis.length-1,index++后index=lis.length
+            // 此时应让index=0
+            if (index == lis.length) {
+            index = 0;
+            }
+            //显示对应下标的图片,让其他兄弟隐藏
+            lis.eq(index).fadeIn().siblings().fadeOut();
+            //给对应下标的小圆点按钮添加current类名,其他兄弟移除current类名
+            $('.focus i').eq(index).addClass('current').siblings().removeClass('current');
+        }
+
+        //2.左边箭头点击事件
+        $('.arrow-left').click(function () {
+            index--;
+            //如果当前是第一张(index=0),index--后,index<0,此时应显示最后一张,让index=lis.length-1
+            if (index < 0) {
+            index = lis.length - 1;
+            }
+            //显示对应下标的图片,让其他兄弟隐藏
+            lis.eq(index).fadeIn().siblings().fadeOut();
+            //给对应下标的小圆点按钮添加current类名,其他兄弟移除current类名
+            $('.focus i').eq(index).addClass('current').siblings().removeClass('current');
+        })
+
+        //3.底部圆点按钮鼠标移入事件
+        btns = $('.focus i');
+        for (var i = 0; i < btns.length; i++) {
+            //设置index属性,记录当前下标
+            btns.eq(i).attr('index', i);
+            //给btn注册鼠标移入事件
+            btns.eq(i).mouseenter(fn);
+        }
+        //btn的事件处理函数
+        function fn() {
+            var index = $(this).attr('index');
+            lis.eq(index).fadeIn().siblings().fadeOut();
+            $(this).addClass('current').siblings().removeClass('current');
+        }
+
+        //4.自动轮播
+        //先执行一次定时器
+        var timeid = setInterval(function () {
+            right()
+        }, 3000)
+        //鼠标移出div时,设置定时器,调用右边箭头的点击事件
+        $('.slider').mouseleave(function () {
+            timeid = setInterval(function () {
+            right()
+            }, 3000)
+        })
+        //鼠标移入div时,清除定时器
+        $('.slider').mouseenter(function(){
+            clearInterval(timeid)
+        })
+
+    })
+</script>
+</html>
